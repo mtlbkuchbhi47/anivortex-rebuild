@@ -1,0 +1,41 @@
+name: anivortex_rebuild
+publish_to: 'none'
+description: Initial Flutter rebuild scaffold reconstructed from AniVortex 5.0.1 APK assets and runtime evidence.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  shared_preferences: ^2.3.2
+  url_launcher: ^6.3.1
+  flutter_secure_storage: ^9.2.2
+  video_player: ^2.9.2
+  flutter_riverpod: ^2.5.1
+  lottie: ^3.1.2
+  path_provider: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+  fonts:
+    - family: MazzardH
+      fonts:
+        - asset: assets/fonts/MazzardH-Medium.otf
+          weight: 500
+        - asset: assets/fonts/MazzardH-SemiBold.otf
+          weight: 600
+        - asset: assets/fonts/MazzardH-Bold.otf
+          weight: 700
+    - family: GoogleSans
+      fonts:
+        - asset: assets/fonts/GoogleSans.ttf
