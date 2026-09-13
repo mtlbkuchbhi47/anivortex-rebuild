@@ -1,5 +1,104 @@
-import 'package:flutter/material.dart'; import 'api.dart'; import '../features/home/home_page.dart'; import '../features/search/search_page.dart'; import '../features/downloads/downloads_page.dart'; import '../features/settings/settings_page.dart';
-class AniVortexRebuildApp extends StatefulWidget{const AniVortexRebuildApp({super.key});@override State<AniVortexRebuildApp> createState()=>_AppState();}
-class _AppState extends State<AniVortexRebuildApp>{final api=ApiClient();@override void initState(){super.initState();api.initialize();}@override void dispose(){api.close();super.dispose();}@override Widget build(BuildContext context)=>MaterialApp(debugShowCheckedModeBanner:false,title:'AniVortex',theme:ThemeData(useMaterial3:true,brightness:Brightness.dark,scaffoldBackgroundColor:const Color(0xFF0B0B10),fontFamily:'MazzardH',colorSchemeSeed:const Color(0xFF8B5CF6)),home:_Shell(api:api));}
-class _Shell extends StatefulWidget{const _Shell({required this.api});final ApiClient api;@override State<_Shell> createState()=>_ShellState();}
-class _ShellState extends State<_Shell>{int index=0;@override Widget build(BuildContext context){final pages=[HomePage(api:widget.api),SearchPage(api:widget.api),DownloadsPage(api:widget.api),SettingsPage(api:widget.api)];return Scaffold(body:IndexedStack(index:index,children:pages),bottomNavigationBar:NavigationBar(selectedIndex:index,onDestinationSelected:(i)=>setState(()=>index=i),destinations:const[NavigationDestination(icon:Icon(Icons.home_outlined),selectedIcon:Icon(Icons.home),label:'Home'),NavigationDestination(icon:Icon(Icons.search),selectedIcon:Icon(Icons.search),label:'Search'),NavigationDestination(icon:Icon(Icons.download_outlined),selectedIcon:Icon(Icons.download),label:'Downloads'),NavigationDestination(icon:Icon(Icons.settings_outlined),selectedIcon:Icon(Icons.settings),label:'Settings')]);}}
+import 'package:flutter/material.dart';
+
+import 'api.dart';
+import '../features/home/home_page.dart';
+import '../features/search/search_page.dart';
+import '../features/downloads/downloads_page.dart';
+import '../features/settings/settings_page.dart';
+
+class AniVortexRebuildApp extends StatefulWidget {
+  const AniVortexRebuildApp({super.key});
+
+  @override
+  State<AniVortexRebuildApp> createState() => _AppState();
+}
+
+class _AppState extends State<AniVortexRebuildApp> {
+  final ApiClient api = ApiClient();
+
+  @override
+  void initState() {
+    super.initState();
+    api.initialize();
+  }
+
+  @override
+  void dispose() {
+    api.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'AniVortex',
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF0B0B10),
+        fontFamily: 'MazzardH',
+        colorSchemeSeed: const Color(0xFF8B5CF6),
+      ),
+      home: _Shell(api: api),
+    );
+  }
+}
+
+class _Shell extends StatefulWidget {
+  const _Shell({required this.api});
+
+  final ApiClient api;
+
+  @override
+  State<_Shell> createState() => _ShellState();
+}
+
+class _ShellState extends State<_Shell> {
+  int index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final pages = <Widget>[
+      HomePage(api: widget.api),
+      SearchPage(api: widget.api),
+      DownloadsPage(api: widget.api),
+      SettingsPage(api: widget.api),
+    ];
+
+    return Scaffold(
+      body: IndexedStack(
+        index: index,
+        children: pages,
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: index,
+        onDestinationSelected: (i) {
+          setState(() => index = i);
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search),
+            selectedIcon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.download_outlined),
+            selectedIcon: Icon(Icons.download),
+            label: 'Downloads',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+}
