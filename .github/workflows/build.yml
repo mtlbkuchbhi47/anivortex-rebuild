@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,16 +17,47 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
 
-      - name: Create Android project
+      - name: Prepare Android platform
+        shell: bash
         run: |
-          flutter create . --platforms=android --org app.anivortex
-          sed -i 's/applicationId = "app.anivortex.anivortex_rebuild"/applicationId = "app.anivortex.mobile"/' android/app/build.gradle.kts || true
-          sed -i "s/applicationId 'app.anivortex.anivortex_rebuild'/applicationId 'app.anivortex.mobile'/" android/app/build.gradle || true
+          set -euo pipefail
+          flutter --version
+          flutter create . --platforms=android --org app.anivortex --project-name anivortex_rebuild
+
+          # Preserve the original package/application id used by AniVortex.
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i 's/applicationId = "app\.anivortex\.anivortex_rebuild"/applicationId = "app.anivortex.mobile"/' android/app/build.gradle.kts
+            sed -i 's/namespace = "app\.anivortex\.anivortex_rebuild"/namespace = "app.anivortex.mobile"/' android/app/build.gradle.kts
+          elif [ -f android/app/build.gradle ]; then
+            sed -i "s/applicationId 'app\.anivortex\.anivortex_rebuild'/applicationId 'app.anivortex.mobile'/" android/app/build.gradle
+            sed -i "s/applicationId \"app\.anivortex\.anivortex_rebuild\"/applicationId \"app.anivortex.mobile\"/" android/app/build.gradle
+            sed -i "s/namespace 'app\.anivortex\.anivortex_rebuild'/namespace 'app.anivortex.mobile'/" android/app/build.gradle || true
+            sed -i 's/namespace "app\.anivortex\.anivortex_rebuild"/namespace "app.anivortex.mobile"/' android/app/build.gradle || true
+          fi
+
+          # Keep MainActivity's Java/Kotlin package aligned with the namespace.
+          find android/app/src/main -type f \( -name 'MainActivity.kt' -o -name 'MainActivity.java' \) -print0 | \
+            xargs -0 -r sed -i 's/package app\.anivortex\.anivortex_rebuild/package app.anivortex.mobile/'
+
+          # Make the installed app label match the original app.
+          if [ -f android/app/src/main/res/values/strings.xml ]; then
+            sed -i 's#<string name="app_name">[^<]*</string>#<string name="app_name">AniVortex</string>#' android/app/src/main/res/values/strings.xml
+          fi
+
+          grep -R "app.anivortex.mobile" android/app | head -20 || true
 
       - name: Get dependencies
         run: flutter pub get
@@ -31,11 +65,25 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Build APK
+      - name: Run tests
+        run: flutter test
+
+      - name: Build release APK
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: Verify APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          test -s "$APK"
+          echo "APK: $APK"
+          ls -lh "$APK"
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: anivortex-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 14

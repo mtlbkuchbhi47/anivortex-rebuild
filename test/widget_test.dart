@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:anivortex_rebuild/core/app.dart';
+import 'package:anivortex_rebuild/main.dart';
 
 void main() {
-  testWidgets('AniVortex app starts', (tester) async {
+  testWidgets('AniVortex shell renders all primary destinations', (tester) async {
     await tester.pumpWidget(const AniVortexRebuildApp());
+    await tester.pump();
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('Search'), findsOneWidget);
     expect(find.text('Downloads'), findsOneWidget);

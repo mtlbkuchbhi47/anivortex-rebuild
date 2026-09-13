@@ -29,3 +29,7 @@ flutter build apk --release
 ```
 
 If `flutter create .` asks to overwrite project files, keep the `lib/`, `assets/`, `test/`, `pubspec.yaml` and `docs/` from this rebuild while accepting the generated Android/iOS platform scaffolding.
+
+## GitHub Actions
+
+A ready-to-run workflow is included at `.github/workflows/build.yml`. It generates the Android platform, sets package ID `app.anivortex.mobile`, runs `flutter pub get`, `flutter analyze`, `flutter test`, builds `app-release.apk`, verifies the file, and uploads it as the `anivortex-release-apk` artifact.
