@@ -1,3 +1,4 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:flutter/material.dart'; import 'package:shared_preferences/shared_preferences.dart'; import 'package:url_launcher/url_launcher.dart';
 import '../../core/api.dart';
 class SettingsPage extends StatefulWidget{const SettingsPage({super.key,required this.api});final ApiClient api;@override State<SettingsPage> createState()=>_SettingsPageState();}

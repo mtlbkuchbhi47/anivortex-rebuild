@@ -1,3 +1,4 @@
+// ignore_for_file: annotate_overrides
 import 'dart:async'; import 'dart:convert'; import 'package:http/http.dart' as http; import 'models.dart';
 class ApiClient {
  ApiClient({http.Client? client,this.timeout=const Duration(seconds:15)}):_client=client??http.Client(),_ownsClient=client==null;
